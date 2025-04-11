@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>节点工具合集</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; display: flex; height: 100vh; }
+    nav { width: 200px; background: #f8f8f8; border-right: 1px solid #ddd; padding: 1em; }
+    nav h2 { font-size: 1.2em; margin-bottom: 1em; }
+    nav ul { list-style: none; padding: 0; }
+    nav li { margin: 0.5em 0; cursor: pointer; color: #0077cc; }
+    nav li:hover { text-decoration: underline; }
+    main { flex: 1; padding: 2em; overflow-y: auto; }
+    section { display: none; }
+    section.active { display: block; }
+    textarea, input { width: 100%; margin: 0.5em 0; }
+    button { margin: 0.5em 0; padding: 0.5em 1em; }
+    pre { background: #f0f0f0; padding: 1em; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <nav>
+    <h2>🌐 工具菜单</h2>
+    <ul>
+      <li onclick="switchTab('gen')">1️⃣ 节点生成</li>
+      <li onclick="switchTab('fofa')">2️⃣ FOFA IP 提取</li>
+      <li onclick="switchTab('extract')">3️⃣ 节点提取 IP</li>
+    </ul>
+  </nav>
+  <main>
+    <section id="gen" class="active">
+      <h3>1️⃣ 节点生成（/knots）</h3>
+      <input id="tpl" placeholder="vless://id@1.1.1.1:443?...">
+      <textarea id="ips" rows="5" placeholder="每行一个 IP 地址"></textarea>
+      <button onclick="genKnots()">生成节点</button>
+      <pre id="out1"></pre>
+    </section>
+
+    <section id="fofa">
+      <h3>2️⃣ 提取 FOFA IP（/fofa-ip）</h3>
+      <textarea id="fofa" rows="6" placeholder="粘贴 FOFA JSON 响应"></textarea>
+      <button onclick="parseFofa()">提取 IP</button>
+      <pre id="out2"></pre>
+    </section>
+
+    <section id="extract">
+      <h3>3️⃣ 从节点中提取 IP（/knots2IP）</h3>
+      <textarea id="knots" rows="5" placeholder="粘贴多个节点"></textarea>
+      <button onclick="extractIP()">提取</button>
+      <pre id="out3"></pre>
+    </section>
+  </main>
+
+  <script>
+    function switchTab(id) {
+      document.querySelectorAll("main section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    async function genKnots() {
+      const tpl = document.getElementById('tpl').value;
+      const ips = document.getElementById('ips').value;
+      const res = await fetch(`/knots?basicKnot=${encodeURIComponent(tpl)}`, {
+        method: "POST", body: ips
+      });
+      document.getElementById('out1').textContent = await res.text();
+    }
+
+    async function parseFofa() {
+      const body = document.getElementById('fofa').value;
+      const res = await fetch('/fofa-ip', { method: "POST", body });
+      document.getElementById('out2').textContent = await res.text();
+    }
+
+    async function extractIP() {
+      const nodes = document.getElementById('knots').value;
+      const res = await fetch('/knots2IP', { method: "POST", body: nodes });
+      document.getElementById('out3').textContent = await res.text();
+    }
+  </script>
+</body>
+</html>
