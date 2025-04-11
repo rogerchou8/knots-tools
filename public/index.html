@@ -1,23 +1,89 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
   <meta charset="UTF-8" />
   <title>节点工具合集</title>
   <style>
-    body { margin: 0; font-family: sans-serif; display: flex; height: 100vh; }
-    nav { width: 200px; background: #f8f8f8; border-right: 1px solid #ddd; padding: 1em; }
-    nav h2 { font-size: 1.2em; margin-bottom: 1em; }
-    nav ul { list-style: none; padding: 0; }
-    nav li { margin: 0.5em 0; cursor: pointer; color: #0077cc; }
-    nav li:hover { text-decoration: underline; }
-    main { flex: 1; padding: 2em; overflow-y: auto; }
-    section { display: none; }
-    section.active { display: block; }
-    textarea, input { width: 100%; margin: 0.5em 0; }
-    button { margin: 0.5em 0; padding: 0.5em 1em; }
-    pre { background: #f0f0f0; padding: 1em; white-space: pre-wrap; }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    nav {
+      width: 200px;
+      background: #f8f8f8;
+      border-right: 1px solid #ddd;
+      padding: 1em;
+    }
+
+    nav h2 {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    nav li {
+      margin: 0.5em 0;
+      cursor: pointer;
+      color: #0077cc;
+    }
+
+    nav li:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      flex: 1;
+      padding: 2em;
+      overflow-y: auto;
+    }
+
+    section {
+      display: none;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      margin: 0.5em 0;
+      height: 200px;
+    }
+
+    input {
+      width: 100%;
+      margin: 0.5em 0;
+    }
+
+    button {
+      margin: 0.5em 0;
+      padding: 0.5em 1em;
+      cursor: pointer;
+    }
+
+    pre {
+      background: #f0f0f0;
+      padding: 1em;
+      white-space: pre-wrap;
+      word-break: break-all;
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 300px;
+      border: 1px solid #ccc;
+      margin-bottom: 0.5em;
+    }
   </style>
 </head>
+
 <body>
   <nav>
     <h2>🌐 工具菜单</h2>
@@ -29,25 +95,28 @@
   </nav>
   <main>
     <section id="gen" class="active">
-      <h3>1️⃣ 节点生成（/knots）</h3>
+      <h3>1️⃣ vless节点生成</h3>
       <input id="tpl" placeholder="vless://id@1.1.1.1:443?...">
-      <textarea id="ips" rows="5" placeholder="每行一个 IP 地址"></textarea>
+      <textarea id="ips" placeholder="每行一个 IP 地址"></textarea>
       <button onclick="genKnots()">生成节点</button>
       <pre id="out1"></pre>
+      <button onclick="copyToClipboard('out1')">📋 复制结果</button>
     </section>
 
     <section id="fofa">
-      <h3>2️⃣ 提取 FOFA IP（/fofa-ip）</h3>
-      <textarea id="fofa" rows="6" placeholder="粘贴 FOFA JSON 响应"></textarea>
+      <h3>2️⃣ 提取 FOFA IP</h3>
+      <textarea id="fofa" placeholder="粘贴 FOFA JSON 响应"></textarea>
       <button onclick="parseFofa()">提取 IP</button>
       <pre id="out2"></pre>
+      <button onclick="copyToClipboard('out2')">📋 复制结果</button>
     </section>
 
     <section id="extract">
-      <h3>3️⃣ 从节点中提取 IP（/knots2IP）</h3>
-      <textarea id="knots" rows="5" placeholder="粘贴多个节点"></textarea>
+      <h3>3️⃣ 从vless节点中提取 IP</h3>
+      <textarea id="knots" placeholder="粘贴多个节点"></textarea>
       <button onclick="extractIP()">提取</button>
       <pre id="out3"></pre>
+      <button onclick="copyToClipboard('out3')">📋 复制结果</button>
     </section>
   </main>
 
@@ -77,6 +146,16 @@
       const res = await fetch('/knots2IP', { method: "POST", body: nodes });
       document.getElementById('out3').textContent = await res.text();
     }
+
+    function copyToClipboard(preId) {
+      const text = document.getElementById(preId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✅ 已复制到剪贴板");
+      }).catch(err => {
+        alert("❌ 复制失败：" + err);
+      });
+    }
   </script>
 </body>
+
 </html>
