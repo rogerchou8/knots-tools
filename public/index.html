@@ -91,6 +91,7 @@
       <li onclick="switchTab('gen')">1️⃣ 节点生成</li>
       <li onclick="switchTab('fofa')">2️⃣ FOFA IP 提取</li>
       <li onclick="switchTab('extract')">3️⃣ 节点提取 IP</li>
+      <li onclick="switchTab('fofaIpLoc')">4️⃣IP 定位工具</li>
     </ul>
   </nav>
   <main>
@@ -105,7 +106,7 @@
 
     <section id="fofa">
       <h3>2️⃣ 提取 FOFA IP</h3>
-      <textarea id="fofa" placeholder="粘贴 FOFA JSON 响应"></textarea>
+      <textarea id="fofaIP" placeholder="粘贴 FOFA JSON 响应"></textarea>
       <button onclick="parseFofa()">提取 IP</button>
       <pre id="out2"></pre>
       <button onclick="copyToClipboard('out2')">📋 复制结果</button>
@@ -117,6 +118,25 @@
       <button onclick="extractIP()">提取</button>
       <pre id="out3"></pre>
       <button onclick="copyToClipboard('out3')">📋 复制结果</button>
+    </section>
+
+    <section id="fofaIpLoc">
+      <h3>4️⃣IP 定位工具</h3>
+      <textarea id="fofaInput" placeholder="每行一个 IP 地址"></textarea>
+      <!-- <button onclick="extractIPs()">提取 IP</button> -->
+      <button onclick="lookupLocation()">🌍 IP 定位</button>
+      <!-- 引入外部 JS -->
+      <script src="fofa-tool.js"></script>
+      <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+      <!-- 国家筛选 -->
+      <label for="countryFilter">筛选国家：</label>
+      <select id="countryFilter">
+        <option value="">🌍 全部国家</option>
+      </select>
+
+      <button onclick="downloadExcel()">📥 下载 Excel</button>
+      <pre id="out4"></pre>
+      <button onclick="copyToClipboard('out4')">📋 复制结果</button>
     </section>
   </main>
 
@@ -136,10 +156,30 @@
     }
 
     async function parseFofa() {
-      const body = document.getElementById('fofa').value;
-      const res = await fetch('/fofa-ip', { method: "POST", body });
+      let raw = document.getElementById('fofaIP').value;
+
+      // 清除 UTF-8 BOM 和多余空格
+      raw = raw.trim().replace(/^\uFEFF/, '');
+
+      let json;
+      try {
+        json = JSON.parse(raw);
+      } catch (e) {
+        alert("⚠️ 请输入正确的 JSON");
+        return;
+      }
+
+      const res = await fetch('/fofa-ip', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json)
+      });
+
       document.getElementById('out2').textContent = await res.text();
     }
+
 
     async function extractIP() {
       const nodes = document.getElementById('knots').value;
@@ -148,13 +188,35 @@
     }
 
     function copyToClipboard(preId) {
-      const text = document.getElementById(preId).textContent;
+      const text = document.getElementById(preId).textContent.trim();
+
+      if (!text) {
+        // 如果内容为空或仅包含空白字符，不进行复制
+        displayCopyStatus(preId, "❌ 内容为空，复制失败");
+        return;
+      }
+
       navigator.clipboard.writeText(text).then(() => {
-        alert("✅ 已复制到剪贴板");
+        displayCopyStatus(preId, "✅ 已复制到剪贴板");
       }).catch(err => {
-        alert("❌ 复制失败：" + err);
+        displayCopyStatus(preId, "❌ 复制失败：" + err);
       });
     }
+
+    function displayCopyStatus(preId, message) {
+      const preElement = document.getElementById(preId);
+      const statusElement = document.createElement('span');
+      statusElement.textContent = message;
+      statusElement.style.color = message.startsWith("✅") ? "green" : "red";
+      statusElement.style.marginLeft = "10px";
+      preElement.parentNode.appendChild(statusElement);
+
+      // 清除提示信息，1.5秒后
+      setTimeout(() => {
+        statusElement.remove();
+      }, 1500);
+    }
+
   </script>
 </body>
 
