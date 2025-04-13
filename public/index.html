@@ -124,7 +124,7 @@
       <h3>4️⃣IP 定位工具</h3>
       <textarea id="fofaInput" placeholder="每行一个 IP 地址"></textarea>
       <!-- <button onclick="extractIPs()">提取 IP</button> -->
-      <button onclick="lookupLocation()">🌍 IP 定位</button>
+      <button onclick="lookupViaAPI()">🌍 IP 定位</button>
       <!-- 引入外部 JS -->
       <script src="fofa-tool.js"></script>
       <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -215,6 +215,22 @@
       setTimeout(() => {
         statusElement.remove();
       }, 1500);
+    }
+
+    async function lookupViaAPI() {
+      const input = document.getElementById("fofaInput").value;
+      const res = await fetch('/ip-lookup', {
+        method: "POST",
+        body: input
+      });
+
+      const data = await res.json();
+      document.getElementById("out4").textContent =
+        data.map(d => d.info).join("\n");
+
+      locationResults = data;  // 保存所有结果
+      updateCountryFilterOptions();  // 重建国家选项
+      applyCountryFilter();          // 显示筛选结果
     }
 
   </script>

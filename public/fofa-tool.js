@@ -34,7 +34,7 @@ async function lookupLocation() {
       try {
         const res = await fetch(`https://freeipapi.com/api/json/${ip}`);
         const data = await res.json();
-        if (!data || data.countryCode === undefined) {
+        if (!data || !data.countryCode) {
           return `${padIP(ip)} - 定位失败`;
         }
 
