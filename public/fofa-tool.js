@@ -93,6 +93,7 @@ function applyCountryFilter() {
     : locationResults;
 
   document.getElementById('out4').textContent = filteredResults.map(r => r.info).join("\n");
+  document.getElementById('out4-ip').textContent = filteredResults.map(r => r.ip).join("\n");
 }
 
 function copyToClipboard(elementId) {
@@ -109,8 +110,14 @@ function downloadExcel() {
   }
 
   const data = filteredResults.map(item => {
-    const [ip, rest] = item.info.split(" - ");
-    return { IP地址: ip.trim(), 详细信息: rest?.trim() || "" };
+    const [ip, ...restParts] = item.info.trim().split(/\s+/);
+    const detail = restParts.join(" ");
+
+    return {
+      IP地址: ip,
+      国家: item.country || "",
+      详细信息: detail
+    };
   });
 
   const worksheet = XLSX.utils.json_to_sheet(data);
@@ -118,6 +125,7 @@ function downloadExcel() {
   XLSX.utils.book_append_sheet(workbook, worksheet, "IP定位结果");
   XLSX.writeFile(workbook, "IP定位结果.xlsx");
 }
+
 
 // 给国家选择框绑定筛选逻辑
 window.addEventListener('DOMContentLoaded', () => {

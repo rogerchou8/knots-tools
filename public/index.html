@@ -81,6 +81,24 @@
       border: 1px solid #ccc;
       margin-bottom: 0.5em;
     }
+
+    #github-link {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #f0f0f0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #0366d6;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.2s ease;
+    }
+
+    #github-link:hover {
+      background-color: #e0e0e0;
+    }
   </style>
 </head>
 
@@ -91,8 +109,9 @@
       <li onclick="switchTab('gen')">1️⃣ 节点生成</li>
       <li onclick="switchTab('fofa')">2️⃣ FOFA IP 提取</li>
       <li onclick="switchTab('extract')">3️⃣ 节点提取 IP</li>
-      <li onclick="switchTab('fofaIpLoc')">4️⃣IP 定位工具</li>
+      <li onclick="switchTab('fofaIpLoc')">4️⃣ IP 定位工具</li>
     </ul>
+    <a href="https://github.com/rogerchou8/knots-tools" target="_blank" id="github-link">🔗 Github仓库</a>
   </nav>
   <main>
     <section id="gen" class="active">
@@ -121,7 +140,7 @@
     </section>
 
     <section id="fofaIpLoc">
-      <h3>4️⃣IP 定位工具</h3>
+      <h3>4️⃣ IP 定位工具</h3>
       <textarea id="fofaInput" placeholder="每行一个 IP 地址"></textarea>
       <!-- <button onclick="extractIPs()">提取 IP</button> -->
       <button onclick="lookupViaAPI()">🌍 IP 定位</button>
@@ -129,14 +148,15 @@
       <script src="fofa-tool.js"></script>
       <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
       <!-- 国家筛选 -->
-      <label for="countryFilter">筛选国家：</label>
+      <label for="countryFilter">筛选：</label>
       <select id="countryFilter">
-        <option value="">🌍 全部国家</option>
+        <option value="">🌍 全部</option>
       </select>
 
       <button onclick="downloadExcel()">📥 下载 Excel</button>
       <pre id="out4"></pre>
-      <button onclick="copyToClipboard('out4')">📋 复制结果</button>
+      <pre id="out4-ip" hidden></pre>
+      <button onclick="copyToClipboard('out4-ip')">📋 复制结果</button>
     </section>
   </main>
 
@@ -225,8 +245,8 @@
       });
 
       const data = await res.json();
-      document.getElementById("out4").textContent =
-        data.map(d => d.info).join("\n");
+      document.getElementById("out4").textContent = data.map(d => d.info).join("\n");
+      document.getElementById("out4-ip").textContent = data.map(d => d.ip).join("\n");
 
       locationResults = data;  // 保存所有结果
       updateCountryFilterOptions();  // 重建国家选项
