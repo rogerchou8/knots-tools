@@ -73,7 +73,7 @@ function updateCountryFilterOptions() {
   // 添加“全部”选项
   const allOption = document.createElement("option");
   allOption.value = "";
-  allOption.textContent = "🌍 全部国家";
+  allOption.textContent = "🌍 全部";
   select.appendChild(allOption);
 
   // 添加其他国家选项
