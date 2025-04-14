@@ -1,6 +1,6 @@
 # Cloudflare Pages 部署文档
 
-本文档详细描述了如何使用 `wrangler` 工具将您的项目部署到 Cloudflare Pages。我们以 `nots-tools` 项目为例，包含了从安装 `wrangler` 到部署的整个流程。
+本文档详细描述了如何使用 `wrangler` 工具将您的项目部署到 Cloudflare Pages。我们以 `knots-tools` 项目为例，包含了从安装 `wrangler` 到部署的整个流程。
 
 ## 1. 安装 Wrangler 工具
 
@@ -46,17 +46,17 @@ wrangler login
 
 ## 3. 初始化项目
 
-在命令行中，使用以下命令进入您的项目目录。假设您的项目目录是 `nots-tools`，请执行：
+在命令行中，使用以下命令进入您的项目目录。假设您的项目目录是 `knots-tools`，请执行：
 
 ```bash
 cd knots-tools
 ```
 
-如果您尚未创建 Cloudflare Pages 项目，请在 Cloudflare 控制台创建一个新的 Pages 项目，名称为 `nots-tools`。
+如果您尚未创建 Cloudflare Pages 项目，请在 Cloudflare 控制台创建一个新的 Pages 项目，名称为 `knots-tools`。
 
 ## 4. 部署项目到 Cloudflare Pages
 
-使用 `wrangler` 将 `nots-tools` 项目部署到 Cloudflare Pages。确保您的项目目录中包含 `public` 文件夹，并且该文件夹包含您要部署的静态文件。
+使用 `wrangler` 将 `knots-tools` 项目部署到 Cloudflare Pages。确保您的项目目录中包含 `public` 文件夹，并且该文件夹包含您要部署的静态文件。
 
 执行以下命令进行部署：
 
@@ -83,4 +83,4 @@ wrangler pages deploy public --project-name=knots-tools
 
 ### 总结
 
-通过上述步骤，您已经成功使用 `wrangler` 工具将 `nots-tools` 项目部署到 Cloudflare Pages。您可以随时使用 `wrangler` 进行项目的更新和维护。
+通过上述步骤，您已经成功使用 `wrangler` 工具将 `knots-tools` 项目部署到 Cloudflare Pages。您可以随时使用 `wrangler` 进行项目的更新和维护。
